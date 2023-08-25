@@ -1,0 +1,80 @@
+# This Python 3 environment comes with many helpful analytics libraries installed
+# It is defined by the kaggle/python Docker image: https://github.com/kaggle/docker-python
+# For example, here's several helpful packages to load
+
+import numpy as np # linear algebra
+import pandas as pd # data processing, CSV file I/O (e.g. pd.read_csv)
+
+# Input data files are available in the read-only "../input/" directory
+# For example, running this (by clicking run or pressing Shift+Enter) will list all files under the input directory
+
+import os
+for dirname, _, filenames in os.walk('/kaggle/input'):
+    for filename in filenames:
+        print(os.path.join(dirname, filename))
+
+# You can write up to 20GB to the current directory (/kaggle/working/) that gets preserved as output when you create a version using "Save & Run All" 
+# You can also write temporary files to /kaggle/temp/, but they won't be saved outside of the current session
+
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+df=pd.read_csv('/kaggle/input/black-friday-sale/train.csv')
+
+df.info()
+
+df.dtypes
+
+df.duplicated().sum()
+
+df.isna().sum().sort_values(ascending=False)
+
+df.describe()
+
+df.describe()
+
+df['Product_Category_3'] = df['Product_Category_3'].fillna('0')
+
+df['Product_Category_2'] = df['Product_Category_2'].astype(int)
+
+df['Product_Category_3'] = df['Product_Category_3'].astype(int)
+
+df.groupby('Gender')['Purchase'].sum().plot(kind='bar')
+
+df.groupby('Gender')['User_ID'].agg('count').plot(kind='bar')
+
+df.groupby('Marital_Status')['Purchase'].agg('sum').plot(kind='bar')
+
+df.groupby('City_Category')['Purchase'].agg(['sum']).sort_values(by='sum',ascending=False).plot(kind='bar')
+df.groupby('City_Category')['Purchase'].agg(['count']).sort_values(by='count',ascending=False).plot(kind='bar')
+df.groupby('City_Category')['User_ID'].agg(['count'])
+
+df.groupby('Occupation')['Purchase'].agg(['count']).sort_values(by='count',ascending=False).plot(kind='barh')
+df.groupby('Occupation')['Purchase'].agg(['sum']).sort_values(by='sum',ascending=False).plot(kind='barh')
+
+def Age_group_1 (x):
+  if x in ['0-17', '18-25']:
+    return 'youth'
+  if x in ['26-35', '36-45']:
+    return 'middle age'
+  if x in ['46-50', '51-55']:
+    return 'older than average'
+  return x
+
+df['Age_group'] = df['Age'].apply(Age_group_1)
+
+df.groupby('Age_group')['Purchase'].agg(['sum']).plot(kind='bar')
+
+df.pivot_table(index='Stay_In_Current_City_Years', columns='Gender',values='Purchase', aggfunc=['count','median']).plot(kind='barh')
+
+df.groupby('Product_Category_1')['Purchase'].agg(['sum']).sort_values(by='sum',ascending=False).plot(kind='bar')
+df.groupby('Product_Category_2')['Purchase'].agg(['sum']).sort_values(by='sum',ascending=False).plot(kind='bar')
+df.groupby('Product_Category_3')['Purchase'].agg(['sum']).sort_values(by='sum',ascending=False).plot(kind='bar')
+
+df.groupby('User_ID', as_index=False).agg({'Purchase':'sum'}).sort_values(by='Purchase',ascending=False).head(10)
+
+df.groupby('Product_ID', as_index=False).agg({'Purchase':'count'}).sort_values(by='Purchase',ascending=False).head(10)
+
+df.groupby('City_Category', as_index=False).agg({'User_ID': 'nunique'}).sort_values('User_ID', ascending=False)
+
